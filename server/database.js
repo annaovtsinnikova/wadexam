@@ -2,16 +2,18 @@ const Pool = require('pg').Pool;
 const pool = new Pool({
     user: "postgres",
     password: "postgres", // Enter your password here
-    database: "testWad", //Try to use the same name for your database
+    database: "postgres", //Try to use the same name for your database
     host: "localhost",
-    port: "5432"
+    port: "5431"
 });
 
 const execute = async(createTblQuery, insertDataQuery) => {
     try {
         await pool.connect();
         await pool.query(createTblQuery);
-        await pool.query(insertDataQuery);
+        // await pool.query(insertDataQuery);
+        const result = await pool.query(insertDataQuery);
+        return result.rows; 
         return true;
     } catch (error) {
         console.error(error.stack);
@@ -51,6 +53,7 @@ const insertDataQuery = `WITH data (studentcode, studentname, hw1,  hw2, exam, f
 execute(createTblQuery, insertDataQuery).then(result => {
     if (result) {
         console.log('If does not exists, table "wadcourse" is created');
+        console.log('Inserted Rows:', result);
     }
 });
 
