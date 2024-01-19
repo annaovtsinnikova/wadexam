@@ -67,7 +67,9 @@ table {
             <td>{{ grade.hw1 }}</td>
             <td>{{ grade.hw2 }}</td>
             <td>{{ grade.exam }}</td>
-            <td>{{ grade.final }}</td>
+            <td :style="{ backgroundColor: getBackgroundColor(grade.final, grade.exam) }">
+              {{ grade.final }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -88,11 +90,15 @@ export default {
       fetch(`http://localhost:3000/api/grades`)
         .then((response) => response.json())
         .then((data) => {
-        console.log(data); // Log the received data
+        console.log(data); 
         this.grades = data;
       })
         .catch((err) => console.log(err.message));
     },
+
+    getBackgroundColor(finalGrade, examScore) {
+      return finalGrade < 21 || examScore < 21 ? "red" : "green";
+    }
   },
   mounted() {
     this.fetchRecords();
