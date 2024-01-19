@@ -21,6 +21,8 @@
             <td :class="{ 'final-cell': true }"> <span> {{ grade.total }}</span></td>
             <td>
               <button @click="() => updateGrade(grade)">Update</button>
+             
+          
             </td>
           </tr>
           </table>
