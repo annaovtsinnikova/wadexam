@@ -10,6 +10,7 @@
             <th>Homework 2</th>
             <th>Exam</th>
             <th>Final grade</th>
+            <th>Action</th>
           </tr>
           <tr class="item" v-for="grade in grades" :key="grade.id">
             <td><input name="studentcode" type="text" id="studentcode" required v-model="grade.studentcode"></td>
@@ -18,6 +19,9 @@
             <td><input name="hw2" type="number" id="hw2" required v-model="grade.hw2"></td>
             <td><input name="exam" type="number" id="exam" required v-model="grade.exam "></td>
             <td :class="{ 'final-cell': true }"> <span> {{ grade.total }}</span></td>
+            <td>
+              <button @click="() => updateGrade(grade)">Update</button>
+            </td>
           </tr>
           </table>
     </div>
@@ -26,6 +30,7 @@
 
 
 <script>
+
 export default {
   name: "Instructor",
   data() {
@@ -62,6 +67,20 @@ export default {
   },
   calculateTotal(grade) {
     return (grade.hw1 || 0) + (grade.hw2 || 0) + (grade.exam || 0);
+  },
+  updateGrade(grade) {
+    fetch(`http://localhost:3000/api/grades/${grade.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(grade),
+    })
+    .then((response) => response.json())
+    .then((updateGrade) => {
+      console.log('Grade updated:', updateGrade);
+    })
+    .catch((error) => console.error('Error updating grade;', error));
   },
 
   },
@@ -101,5 +120,11 @@ input{
 .final-cell span {
   display: inline-block;
   padding: 6px;
+}
+
+button {
+  background-color: darkmagenta;
+  color: white;
+  cursor: pointer;
 }
 </style>
