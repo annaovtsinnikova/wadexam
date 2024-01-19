@@ -17,7 +17,7 @@
             <td><input name="hw1" type="number" id="hw1" required v-model="grade.hw1"></td>
             <td><input name="hw2" type="number" id="hw2" required v-model="grade.hw2"></td>
             <td><input name="exam" type="number" id="exam" required v-model="grade.exam "></td>
-            <td><input name="final" type="number" id="final" required v-model="grade.final "></td>
+            <td :class="{ 'final-cell': true }"> <span> {{ grade.total }}</span></td>
           </tr>
           </table>
     </div>
@@ -41,13 +41,29 @@ export default {
       grades: [],
     };
   },
+  watch: {
+    grades: {
+      deep: true,
+      handler(newGrades) {
+        newGrades.forEach((grade) => {
+          grade.total = this.calculateTotal(grade);
+        });
+      },
+    },
+  },
   methods: {
     fetchRecords() {
       fetch(`http://localhost:3000/api/grades`)
         .then((response) => response.json())
-        .then((data) => (this.grades = data))
+        .then((data) => {
+          this.grades = data.map(grade => ({ ...grade, total: this.calculateTotal(grade) }));
+        })
         .catch((err) => console.log(err.message));
   },
+  calculateTotal(grade) {
+    return (grade.hw1 || 0) + (grade.hw2 || 0) + (grade.exam || 0);
+  },
+
   },
   mounted() {
     this.fetchRecords();
@@ -76,5 +92,14 @@ h1 {
 input{
   width: 100px;
   text-align: center
+}
+
+.final-cell {
+  background-color:darkcyan;
+}
+
+.final-cell span {
+  display: inline-block;
+  padding: 6px;
 }
 </style>
